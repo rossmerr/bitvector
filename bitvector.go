@@ -74,6 +74,41 @@ func NewBitVectorFromVector(vector BitVector) *BitVector {
 	}
 }
 
+func NewBitVectorFromVectorPadStart(vector *BitVector, padding int) *BitVector {
+	length, err := getArrayLength(vector.Length()+padding, bitsPerInt32)
+	if err != nil {
+		panic(err)
+	}
+
+	array := make([]uint32, length)
+
+	index, err := getArrayLength(padding+1, bitsPerInt32)
+	if err != nil {
+		panic(err)
+	}
+
+	index--
+
+	offset := padding % bitsPerInt32
+
+	arrayLength, err := getArrayLength(vector.length, bitsPerInt32)
+	if err != nil {
+		panic(err)
+	}
+
+	for i := index; i < length; i++ {
+		for y := 0; y < arrayLength; y++ {
+			array[i] = (vector.array[y] << offset)
+		}
+	}
+
+	return &BitVector{
+		array:   array,
+		length:  vector.length + padding,
+		version: 0,
+	}
+}
+
 func (s BitVector) Get(index int) bool {
 	if index < 0 || index >= s.Length() {
 		panic(fmt.Sprintf("index %v out of range", index))

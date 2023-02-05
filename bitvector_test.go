@@ -285,7 +285,8 @@ func TestBitVector_Xor(t *testing.T) {
 			left:  []bool{false, false, true, true},
 			right: []bool{false, true, false, true},
 			want:  []bool{false, true, true, false},
-		}}
+		},
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			left := bitvector.NewBitVectorFromBool(tt.left)
@@ -357,6 +358,40 @@ func TestBitVector_And(t *testing.T) {
 				got := left.Get(i)
 				if got != tt.want[i] {
 					t.Errorf("BitVector.Get() = %v, want %v", got, tt.want[i])
+				}
+			}
+		})
+	}
+}
+
+func TestNewBitVectorFromVectorPadStart(t *testing.T) {
+	tests := []struct {
+		name    string
+		values  []bool
+		padding int
+		want    []bool
+	}{
+		{
+			name:    "PadStart",
+			values:  []bool{true, false, false, true, true},
+			padding: 2,
+			want:    []bool{false, false, true, false, false, true, true},
+		},
+		{
+			name:    "PadStart",
+			values:  []bool{true, false, false, true, true},
+			padding: 32,
+			want:    []bool{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, true, true},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := bitvector.NewBitVectorFromBool(tt.values)
+			result := bitvector.NewBitVectorFromVectorPadStart(s, tt.padding)
+			for i := 0; i < len(tt.want); i++ {
+				got := result.Get(i)
+				if got != tt.want[i] {
+					t.Errorf("BitVector.Get(%v) = %v, want %v", i, got, tt.want[i])
 				}
 			}
 		})
