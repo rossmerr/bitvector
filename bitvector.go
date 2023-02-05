@@ -156,7 +156,6 @@ func (s *BitVector) Copy(vector *BitVector, indexStart, indexEnd int) {
 	}
 
 	vector.array[index] = s.array[arrayEnd] >> offset
-	vector.length = indexEnd - indexStart
 	vector.version++
 }
 
