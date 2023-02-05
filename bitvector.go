@@ -154,7 +154,7 @@ func (s *BitVector) Copy(vector *BitVector, indexStart, indexEnd int) {
 		panic("indexStart must be non negative number")
 	}
 
-	if indexEnd >= s.Length() {
+	if indexEnd > s.Length() {
 		panic("indexEnd must be equal to or less than bitvector")
 	}
 
