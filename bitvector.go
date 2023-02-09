@@ -411,7 +411,8 @@ func (s BitVector) String() string {
 type BitVectorIterator struct {
 	vector         *BitVector
 	version        int
-	index          int
+	indexStart     int
+	indexEnd       int
 	currentElement bool
 }
 
@@ -436,9 +437,10 @@ func NewBitVectorIteratorWithOffset(vector *BitVector, indexStart, indexEnd int)
 	}
 
 	return &BitVectorIterator{
-		vector:  vector,
-		index:   indexStart,
-		version: vector.version,
+		vector:     vector,
+		indexStart: indexStart,
+		indexEnd:   indexEnd,
+		version:    vector.version,
 	}
 }
 
@@ -446,11 +448,11 @@ func (s *BitVectorIterator) Reset() {
 	if s.version != s.vector.version {
 		panic("version failed")
 	}
-	s.index = 0
+	s.indexStart = 0
 }
 
 func (s *BitVectorIterator) HasNext() bool {
-	return s.index < s.vector.Length()
+	return s.indexStart < s.indexEnd
 }
 
 func (s *BitVectorIterator) Next() (bool, int) {
@@ -458,15 +460,15 @@ func (s *BitVectorIterator) Next() (bool, int) {
 		panic("version failed")
 	}
 
-	if s.index < s.vector.Length() {
-		index := s.index
-		currentElement := s.vector.Get(s.index)
+	if s.indexStart < s.vector.Length() {
+		index := s.indexStart
+		currentElement := s.vector.Get(s.indexStart)
 		s.currentElement = currentElement
-		s.index++
+		s.indexStart++
 		return currentElement, index
 	}
 
-	s.index = s.vector.Length()
+	s.indexStart = s.vector.Length()
 
-	return false, s.index
+	return false, s.indexStart
 }
