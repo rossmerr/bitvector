@@ -255,7 +255,7 @@ func getArrayLength(n int, div int) (int, error) {
 func (s *BitVector) Rank(value bool, indexStart int) int {
 	rank := 0
 
-	iterator := s.EnumerateFromOffset(indexStart, s.Length())
+	iterator := s.EnumerateFromOffset(0, indexStart)
 	for iterator.HasNext() {
 		v, _ := iterator.Next()
 
