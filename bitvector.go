@@ -252,10 +252,12 @@ func getArrayLength(n int, div int) (int, error) {
 	return 0, nil
 }
 
-func (s *BitVector) Rank(value bool, indexStart int) int {
+// Counts the number of true or false (depending on what the value is set to) in the bitvector
+// but not including the offset
+func (s *BitVector) Rank(value bool, offset int) int {
 	rank := -1
 
-	iterator := s.EnumerateFromOffset(indexStart, s.Length())
+	iterator := s.EnumerateFromOffset(0, offset)
 	for iterator.HasNext() {
 		v, _ := iterator.Next()
 

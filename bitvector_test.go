@@ -409,52 +409,38 @@ func TestBitVector_Rank(t *testing.T) {
 		indexStart int
 	}
 	tests := []struct {
-		name       string
-		values     []bool
-		value      bool
-		indexStart int
-		want       int
+		name   string
+		values []bool
+		value  bool
+		offset int
+		want   int
 	}{
 		{
-			name:       "range",
-			values:     []bool{true, true, false, true, true},
-			value:      false,
-			indexStart: 2,
-			want:       1,
+			name:   "rank",
+			values: []bool{false, true, true, false},
+			value:  true,
+			offset: 2,
+			want:   1,
 		},
 		{
-			name:       "rank start",
-			values:     []bool{true, false, false, false, true},
-			value:      false,
-			indexStart: 0,
-			want:       3,
+			name:   "rank",
+			values: []bool{false, true, true, false, true, false},
+			value:  false,
+			offset: 5,
+			want:   2,
 		},
 		{
-			name:       "offset",
-			values:     []bool{true, true, false, false, false},
-			value:      false,
-			indexStart: 2,
-			want:       3,
-		},
-		{
-			name:       "skip",
-			values:     []bool{false, false, true, true, true},
-			value:      false,
-			indexStart: 2,
-			want:       -1,
-		},
-		{
-			name:       "end",
-			values:     []bool{true, true, true, true, false},
-			value:      false,
-			indexStart: 4,
-			want:       1,
+			name:   "rank",
+			values: []bool{false, true, true, false, true, false, true, false, false},
+			value:  true,
+			offset: 8,
+			want:   4,
 		},
 	}
 	for i, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := bitvector.NewBitVectorFromBool(tt.values)
-			got := s.Rank(tt.value, tt.indexStart)
+			got := s.Rank(tt.value, tt.offset)
 			if got != tt.want {
 				t.Errorf("BitVector.Rank(%v) = %v, want %v", i, got, tt.want)
 			}
