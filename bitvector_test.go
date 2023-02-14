@@ -409,6 +409,13 @@ func TestBitVector_Rank(t *testing.T) {
 		{
 			name:   "rank",
 			values: []bool{false, true, true, false},
+			value:  false,
+			offset: 0,
+			want:   0,
+		},
+		{
+			name:   "rank",
+			values: []bool{false, true, true, false},
 			value:  true,
 			offset: 2,
 			want:   1,
@@ -447,6 +454,13 @@ func TestBitVector_Select(t *testing.T) {
 		rank   int
 		want   int
 	}{
+		{
+			name:   "select",
+			values: []bool{false, true, true, false},
+			value:  false,
+			rank:   0,
+			want:   0,
+		},
 		{
 			name:   "select",
 			values: []bool{false, true, true, false},

@@ -255,7 +255,7 @@ func getArrayLength(n int, div int) (int, error) {
 // Rank counts the number of true or false (depending on what the bit is set to)
 // in the bitvector but not including the offset
 func (s *BitVector) Rank(bit bool, offset int) int {
-	rank := -1
+	rank := 0
 
 	iterator := s.EnumerateFromOffset(0, offset)
 	for iterator.HasNext() {
@@ -266,9 +266,7 @@ func (s *BitVector) Rank(bit bool, offset int) int {
 		}
 	}
 
-	if rank > -1 {
-		rank++
-	}
+	//rank++
 
 	return rank
 }
