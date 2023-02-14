@@ -410,7 +410,7 @@ func (s BitVector) String() string {
 
 		str = append(str, strconv.FormatBool(value))
 	}
-	return fmt.Sprintf("{%s}\n", strings.Join(str, ","))
+	return fmt.Sprintf("{ %s }\n", strings.Join(str, ", "))
 }
 
 type BitVectorIterator struct {
@@ -422,7 +422,7 @@ type BitVectorIterator struct {
 }
 
 func NewBitVectorIteratorWithOffset(vector *BitVector, indexStart, indexEnd int) *BitVectorIterator {
-	if indexStart >= vector.Length() {
+	if indexStart > vector.Length() {
 		panic("indexStart grater or equal to length")
 	}
 	if indexStart < 0 {

@@ -493,3 +493,31 @@ func TestBitVector_Select(t *testing.T) {
 		})
 	}
 }
+
+func TestBitVector_String(t *testing.T) {
+
+	tests := []struct {
+		name   string
+		values []bool
+		want   string
+	}{
+		{
+			name:   "String",
+			values: []bool{false, true, true, false},
+			want:   "{ false, true, true, false }\n",
+		},
+		{
+			name:   "String",
+			values: []bool{},
+			want:   "{  }\n",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := bitvector.NewBitVectorFromBool(tt.values)
+			if got := s.String(); got != tt.want {
+				t.Errorf("BitVector.String() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
