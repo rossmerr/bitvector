@@ -290,7 +290,7 @@ func (s *BitVector) Select(bit bool, rank int) int {
 		}
 	}
 
-	return -1
+	return offset
 }
 
 func (s *BitVector) Concat(vectors []*BitVector) *BitVector {
