@@ -18,7 +18,7 @@ func NewBitVector(length int) *BitVector {
 	return NewBitVectorOfLength(length, false)
 }
 
-func NewBitVectorOfLength(length int, defaultValue bool) *BitVector {
+func NewBitVectorOfLength(length int, defaultBit bool) *BitVector {
 	arrayLength, err := getArrayLength(length, bitsPerInt32)
 	if err != nil {
 		panic(err)
@@ -26,7 +26,7 @@ func NewBitVectorOfLength(length int, defaultValue bool) *BitVector {
 	array := make([]uint32, arrayLength)
 
 	fillValue := uint32(0)
-	if defaultValue {
+	if defaultBit {
 		fillValue = 0xffffffff
 	}
 
@@ -117,12 +117,12 @@ func (s BitVector) Get(index int) bool {
 	return (s.array[index/bitsPerInt32] & (1 << (index % bitsPerInt32))) != 0
 }
 
-func (s BitVector) Set(index int, value bool) {
+func (s BitVector) Set(index int, bit bool) {
 	if index < 0 || index >= s.Length() {
 		panic(fmt.Sprintf("index %v out of range", index))
 	}
 
-	if value {
+	if bit {
 		s.array[index/bitsPerInt32] |= (1 << (index % bitsPerInt32))
 	} else {
 		s.array[index/bitsPerInt32] &= ^(1 << (index % bitsPerInt32))
@@ -131,9 +131,9 @@ func (s BitVector) Set(index int, value bool) {
 	s.version++
 }
 
-func (s *BitVector) SetAll(value bool) {
+func (s *BitVector) SetAll(bit bool) {
 	fillValue := uint32(0)
-	if value {
+	if bit {
 		fillValue = 0xffffffff
 	}
 
@@ -252,16 +252,16 @@ func getArrayLength(n int, div int) (int, error) {
 	return 0, nil
 }
 
-// Counts the number of true or false (depending on what the value is set to) in the bitvector
-// but not including the offset
-func (s *BitVector) Rank(value bool, offset int) int {
+// Rank counts the number of true or false (depending on what the bit is set to)
+// in the bitvector but not including the offset
+func (s *BitVector) Rank(bit bool, offset int) int {
 	rank := -1
 
 	iterator := s.EnumerateFromOffset(0, offset)
 	for iterator.HasNext() {
 		v, _ := iterator.Next()
 
-		if v == value {
+		if v == bit {
 			rank++
 		}
 	}
@@ -273,23 +273,24 @@ func (s *BitVector) Rank(value bool, offset int) int {
 	return rank
 }
 
-func (s *BitVector) Select(value bool, rank int) int {
-	offset := 0
-
-	iterator := s.EnumerateFromOffset(offset, s.Length())
+// find the offset of true or false (depending on what the bit is set to) from the rank
+// (number of times the bit occurs)
+func (s *BitVector) Select(bit bool, rank int) int {
+	offset := -1
+	iterator := s.EnumerateFromOffset(0, s.Length())
 
 	for iterator.HasNext() {
 		v, index := iterator.Next()
 
+		if v == bit {
+			offset++
+		}
 		if offset == rank {
 			return index
 		}
-		if v == value {
-			offset++
-		}
 	}
 
-	return 0
+	return -1
 }
 
 func (s *BitVector) Concat(vectors []*BitVector) *BitVector {

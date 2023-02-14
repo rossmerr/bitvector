@@ -399,15 +399,6 @@ func TestNewBitVectorFromVectorPadStart(t *testing.T) {
 }
 
 func TestBitVector_Rank(t *testing.T) {
-	type fields struct {
-		array   []uint32
-		length  int
-		version int
-	}
-	type args struct {
-		value      bool
-		indexStart int
-	}
 	tests := []struct {
 		name   string
 		values []bool
@@ -443,6 +434,47 @@ func TestBitVector_Rank(t *testing.T) {
 			got := s.Rank(tt.value, tt.offset)
 			if got != tt.want {
 				t.Errorf("BitVector.Rank(%v) = %v, want %v", i, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestBitVector_Select(t *testing.T) {
+	tests := []struct {
+		name   string
+		values []bool
+		value  bool
+		rank   int
+		want   int
+	}{
+		{
+			name:   "select",
+			values: []bool{false, true, true, false},
+			value:  true,
+			rank:   0,
+			want:   1,
+		},
+		{
+			name:   "select",
+			values: []bool{false, true, true, false, true, false, true, false, false, false},
+			value:  false,
+			rank:   3,
+			want:   7,
+		},
+		{
+			name:   "select",
+			values: []bool{false, true, true, false, true, false, true, false, false, false, true, false, true},
+			value:  true,
+			rank:   5,
+			want:   12,
+		},
+	}
+	for i, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := bitvector.NewBitVectorFromBool(tt.values)
+			got := s.Select(tt.value, tt.rank)
+			if got != tt.want {
+				t.Errorf("BitVector.Select(%v) = %v, want %v", i, got, tt.want)
 			}
 		})
 	}
