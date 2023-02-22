@@ -266,8 +266,6 @@ func (s *BitVector) Rank(bit bool, offset int) int {
 		}
 	}
 
-	//rank++
-
 	return rank
 }
 

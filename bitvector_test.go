@@ -416,6 +416,27 @@ func TestBitVector_Rank(t *testing.T) {
 		{
 			name:   "rank",
 			values: []bool{false, true, true, false},
+			value:  false,
+			offset: 4,
+			want:   2,
+		},
+		{
+			name:   "rank",
+			values: []bool{false, true, true, false},
+			value:  false,
+			offset: 1,
+			want:   1,
+		},
+		{
+			name:   "rank",
+			values: []bool{false, true, true, false},
+			value:  true,
+			offset: 1,
+			want:   0,
+		},
+		{
+			name:   "rank",
+			values: []bool{false, true, true, false},
 			value:  true,
 			offset: 2,
 			want:   1,
@@ -426,6 +447,13 @@ func TestBitVector_Rank(t *testing.T) {
 			value:  false,
 			offset: 5,
 			want:   2,
+		},
+		{
+			name:   "rank",
+			values: []bool{false, true, true, false, true, false},
+			value:  false,
+			offset: 6,
+			want:   3,
 		},
 		{
 			name:   "rank",
@@ -515,7 +543,8 @@ func TestBitVector_String(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := bitvector.NewBitVectorFromBool(tt.values)
-			if got := s.String(); got != tt.want {
+			got := s.String()
+			if got != tt.want {
 				t.Errorf("BitVector.String() = %v, want %v", got, tt.want)
 			}
 		})
