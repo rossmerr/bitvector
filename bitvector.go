@@ -273,6 +273,7 @@ func (s *BitVector) Rank(bit bool, offset int) int {
 // (number of times the bit occurs)
 func (s *BitVector) Select(bit bool, rank int) int {
 	offset := -1
+	match := -1
 	iterator := s.EnumerateFromOffset(0, s.Length())
 
 	for iterator.HasNext() {
@@ -280,13 +281,14 @@ func (s *BitVector) Select(bit bool, rank int) int {
 
 		if v == bit {
 			offset++
+			match = index
 		}
 		if offset == rank {
-			return index
+			break
 		}
 	}
 
-	return offset
+	return match
 }
 
 func (s *BitVector) Concat(vectors []*BitVector) *BitVector {
