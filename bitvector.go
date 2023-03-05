@@ -14,10 +14,12 @@ type BitVector struct {
 	version int
 }
 
+// Allocates space to hold the length of bit. All of the values in the BitVector are set to false.
 func NewBitVector(length int) *BitVector {
 	return NewBitVectorOfLength(length, false)
 }
 
+// Allocates space to hold the length of bit. All of the values in the BitVector are set to defaultBit.
 func NewBitVectorOfLength(length int, defaultBit bool) *BitVector {
 	arrayLength, err := getArrayLength(length, bitsPerInt32)
 	if err != nil {
@@ -41,6 +43,7 @@ func NewBitVectorOfLength(length int, defaultBit bool) *BitVector {
 	}
 }
 
+// Allocates space to hold the values from the booleans.
 func NewBitVectorFromBool(values []bool) *BitVector {
 	arrayLength, err := getArrayLength(len(values), bitsPerInt32)
 	if err != nil {
@@ -62,6 +65,7 @@ func NewBitVectorFromBool(values []bool) *BitVector {
 	}
 }
 
+// Allocates a new BitVector with the same length and bit values as vector.
 func NewBitVectorFromVector(vector BitVector) *BitVector {
 	array := make([]uint32, len(vector.array))
 
@@ -74,6 +78,7 @@ func NewBitVectorFromVector(vector BitVector) *BitVector {
 	}
 }
 
+// Allocates a new BitVector padded with the same length and values as the vector but left shifted by the padding.
 func NewBitVectorFromVectorPadStart(vector *BitVector, padding int) *BitVector {
 	length, err := getArrayLength(vector.Length()+padding, bitsPerInt32)
 	if err != nil {
@@ -109,6 +114,7 @@ func NewBitVectorFromVectorPadStart(vector *BitVector, padding int) *BitVector {
 	}
 }
 
+// Returns the bit value at position index.
 func (s BitVector) Get(index int) bool {
 	if index < 0 || index >= s.Length() {
 		panic(fmt.Sprintf("index %v out of range", index))
@@ -117,6 +123,7 @@ func (s BitVector) Get(index int) bool {
 	return (s.array[index/bitsPerInt32] & (1 << (index % bitsPerInt32))) != 0
 }
 
+// Sets the bit value at position index to value.
 func (s BitVector) Set(index int, bit bool) {
 	if index < 0 || index >= s.Length() {
 		panic(fmt.Sprintf("index %v out of range", index))
@@ -131,6 +138,7 @@ func (s BitVector) Set(index int, bit bool) {
 	s.version++
 }
 
+// Sets all the bit values to value.
 func (s *BitVector) SetAll(bit bool) {
 	fillValue := uint32(0)
 	if bit {
@@ -234,14 +242,6 @@ func (s *BitVector) Resize(length int) {
 	s.version++
 }
 
-func (s *BitVector) Enumerate() *BitVectorIterator {
-	return NewBitVectorIteratorWithOffset(s, 0, s.Length())
-}
-
-func (s *BitVector) EnumerateFromOffset(indexStart, indexEnd int) *BitVectorIterator {
-	return NewBitVectorIteratorWithOffset(s, indexStart, indexEnd)
-}
-
 func getArrayLength(n int, div int) (int, error) {
 	if div < 0 {
 		return 0, fmt.Errorf("div arg must be greater than 0")
@@ -325,6 +325,7 @@ func (s *BitVector) Concat(vectors []*BitVector) *BitVector {
 	return vector
 }
 
+// ANDed with vector.
 func (s *BitVector) And(vector *BitVector) {
 	if vector == nil {
 		panic(fmt.Errorf("vector is null"))
@@ -346,6 +347,7 @@ func (s *BitVector) And(vector *BitVector) {
 	s.version++
 }
 
+// ORed with vector.
 func (s *BitVector) Or(vector *BitVector) {
 	if vector == nil {
 		panic(fmt.Errorf("vector is null"))
@@ -367,6 +369,7 @@ func (s *BitVector) Or(vector *BitVector) {
 	s.version++
 }
 
+// XORed with vector.
 func (s *BitVector) Xor(vector *BitVector) {
 	if vector == nil {
 		panic(fmt.Errorf("vector is null"))
@@ -388,6 +391,7 @@ func (s *BitVector) Xor(vector *BitVector) {
 	s.version++
 }
 
+// Inverts all the bit values. On/true bit values are converted to off/false. Off/false bit values are turned on/true.
 func (s *BitVector) Not() {
 	arrayLength, err := getArrayLength(s.length, bitsPerInt32)
 	if err != nil {
@@ -411,6 +415,14 @@ func (s BitVector) String() string {
 		str = append(str, strconv.FormatBool(value))
 	}
 	return fmt.Sprintf("{ %s }\n", strings.Join(str, ", "))
+}
+
+func (s *BitVector) Enumerate() *BitVectorIterator {
+	return NewBitVectorIteratorWithOffset(s, 0, s.Length())
+}
+
+func (s *BitVector) EnumerateFromOffset(indexStart, indexEnd int) *BitVectorIterator {
+	return NewBitVectorIteratorWithOffset(s, indexStart, indexEnd)
 }
 
 type BitVectorIterator struct {
