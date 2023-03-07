@@ -2,6 +2,7 @@ package bitvector
 
 import (
 	"fmt"
+	"math/bits"
 	"strconv"
 	"strings"
 )
@@ -323,6 +324,21 @@ func (s *BitVector) Concat(vectors []*BitVector) *BitVector {
 
 	}
 	return vector
+}
+
+func (s *BitVector) TrueBits() int {
+	output := 0
+
+	arrayLength, err := getArrayLength(s.length, bitsPerInt32)
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < arrayLength; i++ {
+		output += bits.OnesCount32(s.array[i])
+	}
+
+	return output
 }
 
 // ANDed with vector.
